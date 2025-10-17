@@ -17,7 +17,7 @@ class BookingController extends Controller
     public function store(BookingRequest $request)
     {
         $log = Log::channel('booking');
-        $log->info('➡️ Начало бронирования', ['payload' => $request->all()]);
+        $log->info('Начало бронирования', ['payload' => $request->all()]);
 
         try {
             $service = Service::findOrFail($request->service_id);
@@ -53,13 +53,12 @@ class BookingController extends Controller
                     'end_time' => $end->format('H:i:s'),
                 ]);
 
-                $log->info('✅ Бронирование создано', ['id' => $booking->id]);
+                $log->info('Бронирование создано', ['id' => $booking->id]);
                 return $booking;
             });
 
-            $log->info('🏁 Успешное завершение бронирования', ['id' => $booking->id]);
+            $log->info('Успешное завершение бронирования', ['id' => $booking->id]);
 
-            // ✅ редирект на страницу списка услуг (Inertia-friendly)
             return Inertia::location(route('services.index'));
         } catch (\Throwable $e) {
             $log->error('Ошибка при бронировании', ['error' => $e->getMessage()]);

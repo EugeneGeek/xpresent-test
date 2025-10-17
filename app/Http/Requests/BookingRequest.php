@@ -56,14 +56,6 @@ class BookingRequest extends FormRequest
                     $validator->errors()->add('date', 'В воскресенье бронирование недоступно.');
                 }
 
-//                if ($start->hour < 10 || $end->hour >= 20) {
-//                    $validator->errors()->add('start_time', 'Доступное время — с 10:00 до 20:00.');
-//                }
-
-//                if ($start->hour < 10 || $end->greaterThan(Carbon::createFromTime(20, 30))) {
-//                    $validator->errors()->add('start_time', 'Доступное время — с 10:00 до 20:30.');
-//                }
-
                 // --- Проверка пересечения по времени для этой услуги ---
                 $overlap = Booking::where('service_id', $service->id)
                     ->whereDate('date', $start->toDateString())
@@ -81,7 +73,7 @@ class BookingRequest extends FormRequest
                     $validator->errors()->add('start_time', 'Это время уже занято.');
                 }
 
-                // --- ✅ Новая проверка: у клиента не должно быть другого бронирования на то же время ---
+                // --- Новая проверка: у клиента не должно быть другого бронирования на то же время ---
                 $clientConflict = Booking::where('client_phone', $this->client_phone)
                     ->whereDate('date', $start->toDateString())
                     ->where(function ($q) use ($start, $end) {
@@ -129,14 +121,5 @@ class BookingRequest extends FormRequest
             'bookings' => \App\Models\Booking::where('service_id', $this->service_id)->get(),
         ])->with('errors', $errors));
     }
-
-//    protected function failedValidation(Validator $validator)
-//    {
-//        Log::channel('booking')->warning('Ошибки валидации', [
-//            'errors' => $validator->errors()->toArray(),
-//        ]);
-//
-//        throw new ValidationException($validator);
-//    }
 
 }
